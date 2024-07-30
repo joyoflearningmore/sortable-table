@@ -1,0 +1,30 @@
+name: Convert CSV to HTML
+
+on:
+  push:
+    paths:
+      - '*.csv'
+
+jobs:
+  convert:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.x'
+    - name: Install Pandas
+      run: pip install pandas
+    - name: Convert CSV to HTML
+      run: |
+        python -c "
+import pandas as pd
+df = pd.read_csv('your_file.csv')
+df.to_html('index.html', index=False, classes='table', table_id='data-table')
+"
+    - name: Deploy to GitHub Pages
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./ 
